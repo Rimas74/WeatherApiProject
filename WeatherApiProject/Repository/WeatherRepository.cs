@@ -22,7 +22,7 @@ namespace WeatherApiProject.Repository
                 }
             catch (Exception ex)
                 {
-                _logger.LogError(ex, "rror occured while saving weather data");
+                _logger.LogError(ex, "Error occured while saving weather data");
                 }
             }
         }

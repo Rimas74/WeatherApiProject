@@ -12,15 +12,15 @@ namespace WeatherApiProject.Service
         private readonly IWeatherRepository _weatherRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<WeatherService> _logger;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
 
-        public WeatherService(IWeatherRepository weatherRepository, IMapper mapper, ILogger<WeatherService> logger, HttpClient httpClient, IConfiguration configuration)
+        public WeatherService(IWeatherRepository weatherRepository, IMapper mapper, ILogger<WeatherService> logger, IHttpClientFactory httpClientFactory, IConfiguration configuration)
             {
             _weatherRepository = weatherRepository;
             _mapper = mapper;
             _logger = logger;
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             }
 
@@ -31,7 +31,8 @@ namespace WeatherApiProject.Service
                 var apiKey = _configuration.GetValue<string>("WeatherApi:ApiKey"); //var apiKey = _configuration["WeatherApi:ApiKey"]; 
                 var apiUrl = $"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}?unitGroup=metric&key={apiKey}&contentType=json";
 
-                var response = await _httpClient.GetAsync(apiUrl);
+                var httpClient = _httpClientFactory.CreateClient();
+                var response = await httpClient.GetAsync(apiUrl);
                 if (!response.IsSuccessStatusCode)
                     {
                     _logger.LogWarning($"Request to weather API failed for city {city}: {response.ReasonPhrase}");
@@ -61,7 +62,8 @@ namespace WeatherApiProject.Service
                     };
 
                 await _weatherRepository.AddWeatherAsync(weather);
-                _logger.LogInformation($"The information about the weather in {extractedCity} was added to the database on [{DateTime.Now}].");
+
+                //_logger.LogInformation($"The information about the weather in {extractedCity} was added to the database on [{DateTime.Now}].");
 
                 return _mapper.Map<WeatherDto>(weather);
                 }

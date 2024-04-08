@@ -19,6 +19,7 @@ namespace WeatherApiProject
 
             builder.Services.AddHttpClient();
             builder.Services.AddAutoMapper(typeof(Program));
+
             builder.Services.AddScoped<IWeatherRepository, WeatherRepository>();
             builder.Services.AddScoped<IWeatherSevice, WeatherService>();
 
