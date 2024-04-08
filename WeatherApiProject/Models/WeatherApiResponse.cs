@@ -4,19 +4,23 @@ namespace WeatherApiProject.Models
     {
     public class WeatherApiResponse
         {
+        [JsonProperty("currentConditions")]
+        public CurrentWeather CurrentConditions { get; set; }
+
         [JsonProperty("resolvedAddress")]
         public required string ResolvedAddress { get; set; }
 
-        [JsonProperty("days")]
-        public required List<DayWeather> Days { get; set; }
-        }
 
-    public class DayWeather
+
+        }
+    public class CurrentWeather
         {
+        [JsonProperty("datetime")]
+        public string DateTime { get; set; }
+
         [JsonProperty("temp")]
         public double Temperature { get; set; }
 
-        [JsonProperty("datetime")]
-        public required string DateTime { get; set; }
+
         }
     }

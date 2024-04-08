@@ -42,23 +42,30 @@ namespace WeatherApiProject.Service
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var weatherApiResponse = JsonConvert.DeserializeObject<WeatherApiResponse>(responseContent);
 
-                if (weatherApiResponse == null || weatherApiResponse.Days == null || !weatherApiResponse.Days.Any())
+                if (weatherApiResponse == null || weatherApiResponse.CurrentConditions == null)
                     {
                     _logger.LogWarning($"Deserialization of API response failed or no data for city: {city}");
                     return null;
                     }
+                var currentConditions = weatherApiResponse.CurrentConditions;
+
+                var dateTimeWithoutSeconds = DateTime.Parse(currentConditions.DateTime);
+                dateTimeWithoutSeconds = new DateTime(dateTimeWithoutSeconds.Year, dateTimeWithoutSeconds.Month, dateTimeWithoutSeconds.Day,
+                           dateTimeWithoutSeconds.Hour, dateTimeWithoutSeconds.Minute, 0);
 
 
                 var addressParts = weatherApiResponse.ResolvedAddress.Split(',');
                 var extractedCity = addressParts.Length > 0 ? addressParts[0].Trim() : string.Empty;
                 var extractedRegion = addressParts.Length > 2 ? addressParts[1].Trim() : string.Empty;
 
-                var currentDayWeather = weatherApiResponse.Days.First();
+
+
                 var weather = new Weather
                     {
-                    Temperature = currentDayWeather.Temperature,
+                    Temperature = currentConditions.Temperature,
                     City = extractedCity,
-                    Region = extractedRegion
+                    Region = extractedRegion,
+                    Date = dateTimeWithoutSeconds
                     };
 
                 await _weatherRepository.AddWeatherAsync(weather);
