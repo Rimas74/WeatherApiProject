@@ -47,7 +47,7 @@ namespace WeatherApiProject.Service
                     return null;
                     }
 
-                // Assuming you want the current day's weather, which should be the first element in the 'Days' list
+
                 var addressParts = weatherApiResponse.ResolvedAddress.Split(',');
                 var extractedCity = addressParts.Length > 0 ? addressParts[0].Trim() : string.Empty;
                 var extractedRegion = addressParts.Length > 2 ? addressParts[1].Trim() : string.Empty;
@@ -61,6 +61,8 @@ namespace WeatherApiProject.Service
                     };
 
                 await _weatherRepository.AddWeatherAsync(weather);
+                _logger.LogInformation($"The information about the weather in {extractedCity} was added to the database on [{DateTime.Now}].");
+
                 return _mapper.Map<WeatherDto>(weather);
                 }
             catch (Exception ex)
