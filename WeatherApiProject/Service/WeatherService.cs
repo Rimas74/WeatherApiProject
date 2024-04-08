@@ -28,7 +28,7 @@ namespace WeatherApiProject.Service
             {
             try
                 {
-                var apiKey = _configuration["WeatherApi:ApiKey"];
+                var apiKey = _configuration.GetValue<string>("WeatherApi:ApiKey"); //var apiKey = _configuration["WeatherApi:ApiKey"]; 
                 var apiUrl = $"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{city}?unitGroup=metric&key={apiKey}&contentType=json";
 
                 var response = await _httpClient.GetAsync(apiUrl);
@@ -50,13 +50,13 @@ namespace WeatherApiProject.Service
                 // Assuming you want the current day's weather, which should be the first element in the 'Days' list
                 var addressParts = weatherApiResponse.ResolvedAddress.Split(',');
                 var extractedCity = addressParts.Length > 0 ? addressParts[0].Trim() : string.Empty;
-                var extractedRegion = addressParts.Length > 2 ? addressParts[2].Trim() : string.Empty;
+                var extractedRegion = addressParts.Length > 2 ? addressParts[1].Trim() : string.Empty;
 
                 var currentDayWeather = weatherApiResponse.Days.First();
                 var weather = new Weather
                     {
                     Temperature = currentDayWeather.Temperature,
-                    Country = extractedCity,
+                    City = extractedCity,
                     Region = extractedRegion
                     };
 
